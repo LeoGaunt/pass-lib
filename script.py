@@ -4,8 +4,17 @@
 
 import os
 from cryptography.fernet import Fernet
+import time
 
 #---Defines---
+
+def choice():
+    choice = input('What do you want to do \n * Decode Username and Password (d) \n * Encode username and password (e) \n')
+    findKeys()
+    if choice == 'e':
+        encodeDB()
+    else:
+        decodeDB() 
 
 def findKeys():
     if len(fileNames) > 1:
@@ -16,14 +25,43 @@ def findKeys():
         '''
     elif len(fileNames) == 0:
         print('No Key Files found')
-        #Add option to find it theirselves
+        keyMake = input('Can you locate the files? (y/n)')
+        if keyMake == "y":
+            #Add option to find it theirselves
+            pass
+        else:
+            keyGen()
     else:
         print('Only One Key found. 2 Keys Needed to continue')
+    
+def encodeDB():
+    pass
+
+def decodeDB():
+    pass
+
+def keyGen():
+    userKey = Fernet.generate_key()
+    passKey = Fernet.generate_key()
+    print("New keys created.")
+    #writing keys
+    name = input('What do you want your username keyfile to be called? ')
+    filename = name + '.key'
+    file = open(filename, 'wb')  # Open the file as wb to write bytes
+    file.write(userKey)  # The key is type bytes still
+    file.close()
+    name = input('What do you want your password keyfile to be called? ')
+    filename = name + '.key'
+    file = open(filename, 'wb')  # Open the file as wb to write bytes
+    file.write(passKey)  # The key is type bytes still
+    file.close()
+    print('Taking back to home...')
+    time.sleep(0.3)
+    choice()
+
 
 
 #---Code---
-
-key = Fernet.generate_key()
 
 fileChoice = ''
 files = os.listdir() #NEED TO CHECK ABOUT THE DIRECTORY ABOUT USB
@@ -34,17 +72,13 @@ for x in range(0,len(files)):
     else:
         pass
 
-choice = input('What do you want to do \n * Decode Username and Password (d) \n * Encode username and password (e) \n')
-findKeys()
+choice()
+
+
 
 
 
 '''
-#writing keys
-file = open('key.key', 'wb')  # Open the file as wb to write bytes
-file.write(key)  # The key is type bytes still
-file.close()
-
 #reading keys
 file = open('key.key', 'rb')  # Open the file as wb to read bytes
 key = file.read()  # The key will be type bytes
