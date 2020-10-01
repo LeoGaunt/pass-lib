@@ -3,29 +3,32 @@
 #Add option for path to find themselves
 
 import os
-import cryptography
 from cryptography.fernet import Fernet
 
+def findFiles():
+    if len(fileNames) > 1:
+        print('Found ', len(fileNames), ' keys.')
+        ''' May not need as different key for username and password
+        manyFiles = input('There are 2 key files ', fileNames,' which one would you like to use (Please choose a number between 1 and', len(fileNames))
+        fileChoice = fileNames[manyFiles]
+        '''
+    elif len(fileNames) == 0:
+        print('No Key Files found')
+        #Add option to find it theirselves
+    else:
+        print('Only One Key found. 2 Keys Needed to continue')
+
 key = Fernet.generate_key()
+
 
 fileChoice = ''
 files = os.listdir() #NEED TO CHECK ABOUT THE DIRECTORY ABOUT USB
 fileNames = []
 for x in range(0,len(files)):
     if files[x].endswith('.key'):
-        print('A Key file found')
         fileNames.append(files[x])
     else:
         pass
-
-if len(fileNames) > 1:
-    manyFiles = input('There are 2 key files ', fileNames,' which one would you like to use (Please choose a number between 1 and', len(fileNames))
-    fileChoice = fileNames[manyFiles]
-elif len(fileNames) == 0:
-    print('No Key Files found')
-    #Add option to find it theirselves
-else:
-    pass
 
 
 
