@@ -5,7 +5,9 @@
 import os
 from cryptography.fernet import Fernet
 
-def findFiles():
+#---Defines---
+
+def findKeys():
     if len(fileNames) > 1:
         print('Found ', len(fileNames), ' keys.')
         ''' May not need as different key for username and password
@@ -18,8 +20,10 @@ def findFiles():
     else:
         print('Only One Key found. 2 Keys Needed to continue')
 
-key = Fernet.generate_key()
 
+#---Code---
+
+key = Fernet.generate_key()
 
 fileChoice = ''
 files = os.listdir() #NEED TO CHECK ABOUT THE DIRECTORY ABOUT USB
@@ -29,6 +33,9 @@ for x in range(0,len(files)):
         fileNames.append(files[x])
     else:
         pass
+
+choice = input('What do you want to do \n * Decode Username and Password (d) \n * Encode username and password (e) \n')
+findKeys()
 
 
 
