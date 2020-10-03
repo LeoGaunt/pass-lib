@@ -8,8 +8,6 @@ import time
 
 #---Defines---
 
-userFileKey = ''
-passFileKey = ''
 
 def choice():
     choice = input('What do you want to do \n * Decode Username and Password (d) \n * Encode username and password (e) \n')
@@ -19,11 +17,71 @@ def choice():
         decodeDB() 
 
     
+def findDB():
+    txtFileNames = []
+
+    for x in range(0,len(files)):
+        if files[x] == 'db.txt':
+            txtFileNames.append(files[x])
+        else:
+            pass
+
+    if len(txtFileNames) > 1:
+        print('Found ', len(txtFileNames), ' db files.')
+        print('There are ', len(txtFileNames), ' db files ', txtFileNames,' which one would you like to use (Please choose a number between 1 and', len(txtFileNames))
+        choiceFile = int(input())
+        userTxtFile = txtFileNames[choiceFile-1]
+        
+    elif len(txtFileNames) == 0:
+        print('No db Files found')
+        dbMake = input('Can you locate the files? (y/n)')
+        if dbMake == "y":
+            #Add option to find it theirselves
+            pass
+        else:
+            print('File will be created in this directory in when writing to. ')
+            #should create file when tries to access
+            userTxtFile = ''
+    else:
+        print('Found database file')
+        userTxtFile = txtFileNames[0]
+
+    return userTxtFile
+
+
 def encodeDB():
-    userKey = open(userFileKey, "r")
-    userKey.close()
-    passKey = open(passFileKey, "r")
-    passKey.close()
+    with open(userFileKey, 'rb') as f:
+        userKey = f.read() 
+
+    with open(passFileKey, 'rb') as f:
+        passKey = f.read() 
+
+    if findDB() == '':
+        dbFileLoc = './db.txt'
+    else:
+        dbFileLoc = './'+findDB()
+
+    dbfile = open(dbFileLoc, 'a') #undefined but I know this fix when get back by adding if blank add a new file location in directory
+    appName = input('Name of App: ')
+    username = input('Username of App: ').encode()
+    password = input('Password of App: ').encode()
+
+    u = Fernet(userKey)
+    p = Fernet(passKey)
+
+    encUsername = u.encrypt(username)
+    encPassword = p.encrypt(password)
+
+
+    print(encUsername)
+    print(str(encUsername))
+    print(encPassword)
+    print(str(encPassword))
+
+    record = appName + ',' + str(encUsername) + ',' + str(encPassword)
+
+    dbfile.write(record)
+    dbfile.close()
 
 
 
@@ -65,10 +123,10 @@ for x in range(0,len(files)):
 
 if len(fileNames) > 2:
     print('Found ', len(fileNames), ' keys.')
-    print('There are ', len(fileNames), ' key files ', fileNames,' which one would you like to use for the username (Please choose a number between 1 and', len(fileNames))
+    print('There are ', len(fileNames), ' key files ', fileNames,' which one would you like to use for the username (Please choose a number between 1 and ', len(fileNames))
     choiceFile = int(input())
     userFileKey = fileNames[choiceFile-1]
-    print('There are ', len(fileNames), ' key files ', fileNames,' which one would you like to use for the password (Please choose a number between 1 and', len(fileNames))
+    print('There are ', len(fileNames), ' key files ', fileNames,' which one would you like to use for the password (Please choose a number between 1 and ', len(fileNames))
     choiceFile = int(input())
     passFileKey = fileNames[choiceFile-1]
     
@@ -81,21 +139,20 @@ elif len(fileNames) == 0:
     else:
         userFileKey = keyGen()[0]
         passFileKey = keyGen()[1]
+        #NOT WORKING?!?!?!?!?!?!?!?!??!?!?!
 elif len(fileNames) == 1:
     print('Only One Key found. 2 Keys Needed to continue')
     choice()
 else:
     print('Found Keys')
-    #need to choose which key is which
+    print('Which Key do we use for username encrytion/decryption out of', fileNames, ' (Please choose a number between 1 and ', len(fileNames))
+    usernameNumKey = int(input())
+    userFileKey = fileNames[usernameNumKey-1]
+    if usernameNumKey == 0:
+        passFileKey = fileNames[1]
+    else:
+        passFileKey = fileNames[0]
 
 choice()
 
 
-
-
-
-'''
-#reading keys
-file = open('key.key', 'rb')  # Open the file as wb to read bytes
-key = file.read()  # The key will be type bytes
-file.close()'''
