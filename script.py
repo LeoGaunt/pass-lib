@@ -52,7 +52,7 @@ def findDB():
 def encodeDB():
     with open(userFileKey, 'rb') as f:
         userKey = f.read() 
-
+        
     with open(passFileKey, 'rb') as f:
         passKey = f.read() 
 
@@ -88,25 +88,27 @@ def encodeDB():
 def decodeDB():
     pass
 
-def keyGen():
+def userKeyGen():
     userKey = Fernet.generate_key()
-    passKey = Fernet.generate_key()
-    print("New keys created.")
+    print("New user keys created.")
     #writing keys
     name = input('What do you want your username keyfile to be called? ')
     filename = name + '.key'
     file = open(filename, 'wb')  # Open the file as wb to write bytes
     file.write(userKey)  # The key is type bytes still
     file.close()
+    return filename 
+
+def passKeyGen():
+    passKey = Fernet.generate_key()
+    print("New password key created.")
+    #writing keys
     name = input('What do you want your password keyfile to be called? ')
-    filename1 = name + '.key'
-    file = open(filename1, 'wb')  # Open the file as wb to write bytes
+    filename = name + '.key'
+    file = open(filename, 'wb')  # Open the file as wb to write bytes
     file.write(passKey)  # The key is type bytes still
     file.close()
-    print('Taking back to home...')
-    time.sleep(0.3)
-    choice()
-    return filename, filename1
+    return filename
 
 
 
@@ -136,13 +138,16 @@ elif len(fileNames) == 0:
     if keyMake == "y":
         #Add option to find it theirselves
         pass
+    elif keyMake == 'n':
+        userFileKey = userKeyGen()
+        passFileKey = passKeyGen()
+        time.sleep(0.3)
+        print('Returning to Home...')
+        choice()
     else:
-        userFileKey = keyGen()[0]
-        passFileKey = keyGen()[1]
-        #NOT WORKING?!?!?!?!?!?!?!?!??!?!?!
+        print('Unrecognised input')
 elif len(fileNames) == 1:
     print('Only One Key found. 2 Keys Needed to continue')
-    choice()
 else:
     print('Found Keys')
     print('Which Key do we use for username encrytion/decryption out of', fileNames, ' (Please choose a number between 1 and ', len(fileNames))
