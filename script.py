@@ -78,7 +78,7 @@ def encodeDB():
     print(encPassword)
     print(str(encPassword))
 
-    record = appName + ',' + str(encUsername) + ',' + str(encPassword)
+    record = appName + ',' + str(encUsername) + ',' + str(encPassword) + ','
 
     dbfile.write(record)
     dbfile.close()
@@ -86,7 +86,42 @@ def encodeDB():
 
 
 def decodeDB():
-    pass
+    with open(userFileKey, 'rb') as f:
+        userKey = f.read() 
+        
+    with open(passFileKey, 'rb') as f:
+        passKey = f.read() 
+
+    if findDB() == '':
+        dbFileLoc = './db.txt'
+    else:
+        dbFileLoc = './'+findDB()
+
+    with open(dbFileLoc, 'r') as r:
+        fileDecrypt = r.read()
+
+    decryptArr = [x.strip() for x in fileDecrypt.split(',')]
+
+    decryptName = input('Which App do you want the username and password for?')
+
+    for x in range(0,len(decryptArr),3):
+        if decryptName.lower() == decryptArr[x].lower():
+            #What will happen if 2 apps have same name- might need a fix?????
+            print('App Found')
+            appNum = x
+    
+    decUser = bytes(decryptArr[appNum+1])
+    decPass = bytes(decryptArr[appNum+2])
+
+    u = Fernet(userKey)
+    p = Fernet(passKey)
+
+    username = u.decrypt(decUser)
+    password = u.decrypt(decPass)
+
+    print(username)
+    print(password)
+    
 
 def userKeyGen():
     userKey = Fernet.generate_key()
